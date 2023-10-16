@@ -97,7 +97,7 @@ iface eth0 inet static
 - Topologi yang dibuat sudah bisa berjalan secara lokal, tetapi kita belum bisa mengakses jaringan keluar. Maka kita perlu melakukan beberapa hal.
 Ketikkan ``iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.45.0.0/16`` pada router
 - Lalu ketikkan command ini di node ubuntu yang lain ``echo nameserver 192.168.122.1 > /etc/resolv.conf``
-- Semua node sekarang seharusnya sudah bisa melakukan ping ke google, yang artinya adalah sudah tersambung ke internet
+- Semua node sekarang seharusnya sudah bisa melakukan ``ping`` ke google, yang artinya adalah sudah tersambung ke internet
 ### Hasil
 ![Alt text]()
 ## Soal 2
@@ -105,8 +105,8 @@ Ketikkan ``iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.45.0.0/16`
 
 ## Script Pengerjaan
 - Dilakukan setup terlebih dahulu pada Node Yudhistira (DNS Master) anatara lain mengkoneksikan ke routernya menggunakan ``echo nameserver 192.168.122.1 > /etc/resolv.conf`` lalu Instalasi bind ``apt-get update`` dan ``apt-get install bind9 -y``
-- Kemudian buat domain dengan nama arjuna.E17.com berikut sciptnya:
-lakukan perintah dibawah dan isi konfigurasi doamin arjuna.E17.com
+- Kemudian buat domain dengan nama ``arjuna.E17.com`` berikut sciptnya:
+lakukan perintah dibawah dan isi konfigurasi domain ``arjuna.E17.com``
 ```
 nano /etc/bind/named.conf.local
 zone "arjuna.E17.com" {
@@ -114,12 +114,12 @@ zone "arjuna.E17.com" {
 	file "/etc/bind/jarkom/arjuna.E17.com";
 };
 ```
-Buat folder jarkom di dalam /etc/bind dan copykan file db.local ke folder jarkom yang baru saja dibuat dan ubah namanya menjadi arjuna.E17.com
+Buat folder jarkom di dalam ``/etc/bind`` dan copykan file ``db.local`` ke folder ``jarkom`` yang baru saja dibuat dan ubah namanya menjadi ``arjuna.E17.com``
 ```
 mkdir /etc/bind/jarkom
 cp /etc/bind/db.local /etc/bind/jarkom/jarkom2022.com
 ```
-Kemudian buka file arjuna.E17.com dan edit syntaxnya dengan IP Yudhistira masing-masing kelompok:
+Kemudian buka file ``arjuna.E17.com`` dan edit syntaxnya dengan IP Yudhistira masing-masing kelompok:
 ```
 nano /etc/bind/jarkom/jarkom2022.com
 ;
@@ -177,7 +177,7 @@ $TTL	604800
 > Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
 
 ### Script Pengerjaan
-- Pada Yudhistira, edit file /etc/bind/jarkom/abimanyu.E17.com lalu tambahkan subdomain untuk abimanyu.E17.com yang mengarah ke IP Water7. dan tambahkan konfigurasi seperti berikut
+- Pada Yudhistira, edit file ``/etc/bind/jarkom/abimanyu.E17.com`` lalu tambahkan subdomain untuk abimanyu.E17.com yang mengarah ke IP Yudhistira. dan tambahkan konfigurasi seperti berikut
 ```
 nano /etc/bind/jarkom/abimanyu.E17.com
 ;
@@ -199,12 +199,13 @@ parikesit IN	A	10.45.1.2    ; alias
 - Restart bind dengan perintah ``service bind9 restart``
 - Lalu pada client ping subdomain parikesit.abimanyu.E17.com dengan ``ping parikesit.abimanyu.E17.com -c 5``
 ### Hasil
+![Alt text]()
 
 ## Soal 5
 > Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 
 ### Script Pengerjaan
-- Pada Yudhistira, edit file ``/etc/bind/named.conf.local``. Lalu tambahkan konfigurasi berikut ke dalam file named.conf.local. Tambahkan reverse dari 3 byte awal dari IP yang ingin dilakukan Reverse DNS.
+- Pada Yudhistira, edit file ``/etc/bind/named.conf.local``. Lalu tambahkan konfigurasi berikut ke dalam file ``named.conf.local``. Tambahkan reverse dari 3 byte awal dari IP yang ingin dilakukan Reverse DNS.
 ```
 nano /etc/bind/named.conf.local
 zone "3.45.10.in-addr.arpa" {
@@ -213,7 +214,7 @@ zone "3.45.10.in-addr.arpa" {
 };
 ```
 - Buat folder jarkom dengan perintah ``mkdir /etc/bind/jarkom`` lalu copykan file ``db.local`` ke dalam folder jarkom yang baru saja dibuat dan ubah namanya menjadi 2.168.192.in-addr.arpa ``cp /etc/bind/db.local /etc/bind/jarkom/3.45.10.in-addr.arpa``
-- buka file abimanyu.E17.com lalu edit konfigurasinya
+- buka file ``abimanyu.E17.com`` lalu edit konfigurasinya
 ```
 ;
 ; BIND data file for local loopback interface
@@ -230,7 +231,7 @@ $TTL	604800
 4			IN	PTR	abimanyu.E17.com.    ; byte ke-4 dari IP abimanyu
 ```
 - Restart bind dengan perintah ``service bind9 restart``
-- Lalu pada client update package list dan install dnsutils, kemudian kembalikan nameserver agar tersambung dengan yudhistira
+- Lalu pada client update package list dan install ``dnsutils``, kemudian kembalikan nameserver agar tersambung dengan yudhistira
 ```
 apt-get update
 apt-get install dnsutils
@@ -255,7 +256,7 @@ zone "abimanyu.E17.com" {
 };
 ```
 - Restart bind dengan perintah ``service bind9 restart``
-- Buka werkudara, update package lists dan install aplikasi bind9
+- Buka werkudara, update package lists dan install aplikasi ``bind9``
 ```
 apt-get update
 apt-get install bind9 -y
@@ -270,7 +271,7 @@ zone "abimanyu.E17.com" {
 ```
 - Restart bind dengan perintah ``service bind9 restart``
 - Pada server Yudhistira matikan service bind9 ``service bind9 stop``
-- Pada client Nakula pastikan pengaturan nameserver mengarah ke IP Yudhistira dan IP Werkudara, lalu lakukan ping ke abimanyu
+- Pada client Nakula pastikan pengaturan nameserver mengarah ke IP Yudhistira dan IP Werkudara, lalu lakukan ``ping`` ke abimanyu
 ```
 echo nameserver 10.45.1.2 > /etc/resolv.conf
 echo nameserver 10.45.3.2 > /etc/resolv.conf
@@ -284,7 +285,7 @@ ping abimanyu.E17.com -c 5
 > Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
 
 ### Script Pengerjaan
-- Pada Yudhistira, edit file /etc/bind/jarkom/abimanyu.E17.com dan ubah sesuai IP server masing-masing. Perlu menambahkan ``ns1     IN      A       10.55.1.5     ; IP Werkudara`` agar mendapatkan authoritative terhadap Werkudara. ``baratayuda IN NS ns1`` Ini menetapkan server DNS yang berwenang (ns1) untuk subdomain "baratayuda".
+- Pada Yudhistira, edit file ``/etc/bind/jarkom/abimanyu.E17.com`` dan ubah sesuai IP server masing-masing. Perlu menambahkan ``ns1     IN      A       10.55.1.5     ; IP Werkudara`` agar mendapatkan authoritative terhadap Werkudara. ``baratayuda IN NS ns1`` Ini menetapkan server DNS yang berwenang (ns1) untuk subdomain "baratayuda".
 ```
 nano /etc/bind/jarkom/abimanyu.E17.com
 ;
@@ -306,7 +307,7 @@ ns1	IN	A	10.45.3.2	; IP werkudara
 baratayuda IN	NS	ns1
 @	IN	AAAA	::1
 ```
-- Buat file /etc/bind/named.conf.options yang digunakan untuk mengatur opsi konfigurasi global untuk server DNS BIND dan edit konfigurasinya seperti berikut
+- Buat file ``/etc/bind/named.conf.options`` yang digunakan untuk mengatur opsi konfigurasi global untuk server ``DNS BIND`` dan edit konfigurasinya seperti berikut
 ```
 nano /etc/bind/named.conf.options
 options {
@@ -364,7 +365,7 @@ zone "baratayuda.abimanyu.E17.com" {
 };
 ```
 - Buat folder delegasi dengan perintah ``mkdir /etc/bind/delegasi`` lalu copykan file ``db.local`` ke dalam folder delegasi yang baru saja dibuat
-- Edit file baratayuda.abimanyu.E17.com sesuai sytax berikut, dengan menambahkan nama server otoritatif untuk zona ini dan tambah nama alias dengan ``www`` yang dihubungkan ke abimanyu.
+- Edit file ``baratayuda.abimanyu.E17.com`` sesuai sytax berikut, dengan menambahkan nama server otoritatif untuk zona ini dan tambah nama alias dengan ``www`` yang dihubungkan ke abimanyu.
 ```
 ;
 ; BIND data file for local loopback interface
@@ -384,18 +385,147 @@ www	IN	A	10.45.3.4	; abimanyu
 - Restart bind dengan perintah ``service bind9 restart``
 - Lalu pada client lakukan ping ``baratayuda.abimanyu.E17.com`` dan ``www.baratayuda.abimanyu.E17.com``
 ### Hasil
+![Alt]()
 
 ## Soal 8
 > Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+- Dikarenakan sebelumnya telah melakukan delegasi terhadap DNS Slave, sekarang diberi perintah untuk melakukan subdomain terhadap delegasi domain tadi. Langkah pertama edit file ``baratayuda.abimanyu.E17.com`` pada DNS slave werkudara untuk melakukan penambahan subdomain dan aliasnya dengan menghubungkan ke abimanyu dengan memasukkan IP nya
+```
+nano /etc/bind/delegasi/baratayuda.abimanyu.E17.com
+;
+; BIND data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	baratayuda.abimanyu.E17.com. root.baratayuda.abimanyu.E17.com (
+			2		; Serial
+			604800		; Refresh
+			86400		; Retry
+			2419200		; Expire
+			604800 )	; Negative Cache TTL
+;
+@	IN	NS	baratayuda.abimanyu.E17.com.
+@	IN	A	10.45.3.4	; abimanyu
+www	IN	A	10.45.3.4	; abimanyu
+rjp	IN	A	10.45.3.4	; abimanyu
+www.rjp IN	A	10.45.3.4	; abimanyu
+```
+- Restart bind dengan perintah ``service bind9 restart``
+- Lalu pada client ping subdoaminnya ``rjp.baratayuda.abimanyu.E17.com`` dan ``www.rjp.baratayuda.abimanyu.E17.com``
+### Hasil
+![Alt text]()
 
 ## Soal 9
 > Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+- Pada arjuna load balancer, kita konfigurasi DNS nya dan update package list beserta install Nginx
+```
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+
+apt-get update
+apt-get install nginx
+```
+- kemudian buat file``/etc/resolv.conf`` dan isikan beberapa alamat DNSnya. Lalu buat juga file untuk membuat konfigurasi server Nginx yang mana konfigurasi ini mengatur Nginx untuk mendengarkan permintaan pada ``port 80`` dan meneruskannya ke grup server yang ditentukan di dalam blok ``upstream``.
+```
+nano /etc/resolv.conf
+nameserver 10.45.1.2
+nameserver 10.45.3.2
+nameserver 10.45.3.3
+
+nano /etc/nginx/sites-available/lb-modul2
+upstream webserver {
+	server 10.45.3.4;
+	server 10.45.3.5;
+	server 10.45.3.6;
+}
+
+server {
+	listen 80;
+	server_name arjuna.E17.com;
+
+	location / {
+	proxy_pass http://webserver;
+	}
+}
+```
+- Setelah itu buat symlink (shortcut) dari konfigurasi Nginx yang telah dibuat di dalam direktori ``sites-available`` ke direktori ``sites-enabled``. Ini diperlukan agar konfigurasi tersebut dapat diaktifkan. Baru restart bind dengan perintah ``service bind9 restart`` dan cek status server Nginx untuk memastikan bahwa server tersebut berjalan dengan baik.
+```
+ln -s /etc/nginx/sites-available/lb-modul2 /etc/nginx/sites-enabled
+
+service nginx restart
+service nginx status
+```
+- Selanjutnya pada masing-masing web servernya konfigurasikan DNS nya, update package list dan install paket ``Nginx``, ``php``, dan ``php-fm``, tampilkan versi PHP yang diinstall, dan buat direktori baru bernama ``modul2`` di dalam direktori ``/var/www``
+```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+apt-get update && apt install nginx php php-fpm -y
+
+php -v
+
+echo nameserver 10.45.1.2 > /etc/resolv.conv
+
+mkdir /var/www/modul2
+```
+- Buat file index.php di dalam direktori ``/var/www/modul2`` dengan konten PHP yang mencetak "Halo, ini web server [nama_webServer]". serta buat konfigurasi server Nginx dan menyimpannya dalam file ``/etc/nginx/sites-available/modul2``. Konfigurasi ini mengatur Nginx untuk mendengarkan permintaan pada ``port 80``, menetapkan root direktori ke ``/var/www/modul2``, mengizinkan akses file PHP, dan mencatat error dan akses log.
+```
+nano /var/www/modul2/index.php
+<?php
+echo "Halo, ini web server [nama_webServer]";
+?>
+
+nano /etc/nginx/sites-available/modul2
+ server {
+
+ 	listen 80;
+
+ 	root /var/www/modul2;
+
+ 	index index.php index.html index.htm;
+ 	server_name _;
+
+ 	location / {
+ 			try_files $uri $uri/ /index.php?$query_string;
+ 	}
+
+ 	# pass PHP scripts to FastCGI server
+ 	location ~ \.php$ {
+ 	include snippets/fastcgi-php.conf;
+ 	fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+ 	}
+
+ location ~ /\.ht {
+ 			deny all;
+ 	}
+
+ 	error_log /var/log/nginx/jarkom_error.log;
+ 	access_log /var/log/nginx/jarkom_access.log;
+ }
+```
+- Lalu buat symlink dari konfigurasi Nginx yang telah dibuat di dalam direktori ``sites-available``, hapus konfigurasi default Nginx yang ada di dalam direktori sites-enabled.
+- Mulai layanan php-fpm, restart php-fpm, reload konfigurasi Nginx, menerapkan perubahan yang baru saja dibuat, restart server Nginx, dan terakir periksa sintaksis konfigurasi Nginx untuk memastikan tidak ada kesalahan sintaks.
+```
+ln -s /etc/nginx/sites-available/modul2 /etc/nginx/sites-enabled
+rm -r /etc/nginx/sites-enabled/default
+
+service php7.0-fpm start
+service php7.0-fpm restart
+service nginx reload
+service nginx restart
+
+nginx -t
+```
+- Baru jalankan perintah ``curl localhost`` untuk melakukan testing di tiap web server
+### Hasil
+- Pada Abimanyu web server
+![Alt]()
+
+- Pada Prabukusuma web server
+![Alt text]()
+
+- Pada Wisanggeni web server
+![Alt text]()
 
 ## Soal 10
 > Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh
@@ -403,65 +533,131 @@ www	IN	A	10.45.3.4	; abimanyu
     - Abimanyu:8002
     - Wisanggeni:8003
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+- Melanjutkan dari yang nomer 9 diatas, edit file ``lb-modul2`` pada arjuna load balancer dengan menambahkan port masing-masing web server
+```
+nano /etc/nginx/sites-available/lb-modul2
+upstream webserver {
+	server 10.45.3.4:8001;
+	server 10.45.3.5:8002;
+	server 10.45.3.6:8003;
+}
+
+server {
+	listen 80;
+	server_name arjuna.E17.com;
+
+	location / {
+	proxy_pass http://webserver;
+	}
+```
+- Dan pada masing-masing web server edit file ``modul2`` dengan menambahkan port sesuai web server yang dituju.
+```
+nano /etc/nginx/sites-available/modul2 
+ server {
+
+ 	listen [port_webServer];
+
+ 	root /var/www/modul2;
+
+ 	index index.php index.html index.htm;
+ 	server_name _;
+
+ 	location / {
+ 			try_files $uri $uri/ /index.php?$query_string;
+ 	}
+
+ 	# pass PHP scripts to FastCGI server
+ 	location ~ \.php$ {
+ 	include snippets/fastcgi-php.conf;
+ 	fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+ 	}
+
+ location ~ /\.ht {
+ 			deny all;
+ 	}
+
+ 	error_log /var/log/nginx/jarkom_error.log;
+ 	access_log /var/log/nginx/jarkom_access.log;
+ }
+```
+- Baru jalankan perintah ``curl localhost:[port_webServer]`` untuk melakukan testing di tiap web server
+### Hasil
+- Pada Abimanyu web server
+![Alt text]()
+
+-Pada Prabukusuma web server
+![Alt text]()
+
+-Pada Wisanggeni web server
+![Alt text]()
 
 ## Soal 11
 > Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 12
 > Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 13
 > Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 14
 > Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 15
 > Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+###Hasil
+![Alt text]()
 
 ## Soal 16
 > Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 17
 > Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 18
 > Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 19
 > Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text]()
 
 ## Soal 20
 > Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
 
-- Script Pengerjaan
-- Hasil
+### Script Pengerjaan
+### Hasil
+![Alt text}()
