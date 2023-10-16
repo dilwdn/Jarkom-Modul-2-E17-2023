@@ -586,10 +586,10 @@ nano /etc/nginx/sites-available/modul2
 - Pada Abimanyu web server
 ![Alt text]()
 
--Pada Prabukusuma web server
+- Pada Prabukusuma web server
 ![Alt text]()
 
--Pada Wisanggeni web server
+- Pada Wisanggeni web server
 ![Alt text]()
 
 ## Soal 11
