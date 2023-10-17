@@ -596,68 +596,233 @@ nano /etc/nginx/sites-available/modul2
 > Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
 
 ### Script Pengerjaan
+- lakukan instalaasi dan konfigurasi pada node Abimanyu
+```
+apt-get update
+apt-get install apache2 -y
+apt-get install libapache2-mod-php7.0 -y
+service apache2 start
+apt-get install wget -y
+apt-get install unzip -y
+apt-get install php -y
+```
+- Import file dari google drive yang disediakan untuk mengisi ``/var/www`` dari ``abimanyu.E17.com``
+```
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc' -O abi
+```
+- Lakukan unzip dan sesuaikan struktur folder untuk tepat berada di dalam ``/var/www/abimanyu.E17``
+```
+unzip abi -d abimanyu.E17
+rm abi
+mv abimanyu.E17/abimanyu.yyy.com/* abimanyu.E17
+rmdir abimanyu.E17/abimanyu.yyy.com
+```
+- Buat file abimanyu.E17.conf pada ``/etc/apache2/sites-available`` dan copy isi dari file ``000-default.conf`` ke dalamnya
+```
+cp 000-default.conf abimanyu.E17.conf
+```
+- Di dalam tag VirtualHost, isi dengan konfigurasi nama server, alias server, admin server dan pasang DocumentRoot pada /var/www/abimanyu.E17 yang tadi sudah diisi
+- Kemudian setelah itu, untuk menampilkan pada client yaitu menggunakan lynx yang di-install (Jangan lupa untuk menambahkan nameserver router pada saat penginstalan). Baru jalankan testingnya
+```
+curl www.abimanyu.E17.com
+curl abimanyu.E17.com
+```
 ### Hasil
-![Alt text]()
+![Alt text](image/no11.jpg)
+![Alt text](image/no11_2.jpg)
 
 ## Soal 12
 > Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 
 ### Script Pengerjaan
+- Buka file /etc/apache2/sites-available/abimanyu.E17.conf
+- Untuk menyelesaikan permasalahan ini, diperlukan bantuan Directory sebagai tools untuk rewrite Indexes agar dapat melakukan Alias pada domain. Penerapan nya sebagai berikut
+```
+<Directory /var/www/abimanyu.E17/index.php/home>
+  Options +Indexes
+</Directory>
+
+Alias "/home" "/var/www/abimanyu.E17/index.php/home"
+```
+- Setelah itu, lakukan testing dengan menjalankan command berikut pada Node Client
+```
+curl www.abimanyu.E17.com/home
+curl abimanyu.E17.com/home
+```
 ### Hasil
-![Alt text]()
+![Alt text](image/no11.jpg)
+![Alt text](image/no12.jpg)
 
 ## Soal 13
 > Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
 
 ### Script Pengerjaan
+- Import file dari google drive yang disediakan untuk mengisi /var/www dari parikesit.abimanyu.E17.com
+```
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1LdbYntiYVF_NVNgJis1GLCLPEGyIOreS' -O pari
+```
+- Lakukan unzip serta sesuaikan folder untuk tepat berada di dalam /var/www/parikesit.abimanyu.E17/abimanyu.E17
+```
+unzip pari -d parikesit.abimanyu.E17
+rm pari
+mv parikesit.abimanyu.E17/parikesit.abimanyu.yyy.com/* parikesit.abimanyu.E17
+rmdir parikesit.abimanyu.E17/parikesit.abimanyu.yyy.com
+```
+- Buat direktori secret dan isi dengan sebuah file html bebas
+```
+mkdir parikesit.abimanyu.E17/secret
+cd parikesit.abimanyu.E17/secret
+echo '# Ini halaman html bebas, disuruh bikin sama mba2 taiwan' > bebas.html
+```
+- Buat file parikesit.abimanyu.E17.conf pada /etc/apache2/sites-available dan copy isi dari file 000-default.conf ke dalamnya
+```
+cp 000-default.conf parikesit.abimanyu.E17.conf
+```
+- Di dalam tag VirtualHost, isi dengan konfigurasi nama server, alias server, admin server dan pasang DocumentRoot pada /var/www/parikesit.abimanyu.E17 yang tadi sudah diisi
+```
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.E17
+  ServerName parikesit.abimanyu.E17.com
+  ServerAlias www.parikesit.abimanyu.E17.com
+```
+- Setelah itu, testing dilakukan pada Node Client dengan menjalankan command berikut
+```
+curl parikesit.abimanyu.E17.com
+```
 ### Hasil
-![Alt text]()
+![Alt text](image/no13.jpg)
 
 ## Soal 14
 > Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 
 ### Script Pengerjaan
+- Buka file /etc/apache2/sites-available/parikesit.abimanyu.E17.conf
+- Tambahkan konfigurasi di dalam tag VirtualHost untuk membuat directory /var/www/abimanyu.E17/public dapat melakukan directory listing dengan memberikan "Options +Indexes" dan buat directory /var/www/abimanyu.E17/secret tidak dapat diakses dengan memberikan "Options -Indexes"
+```
+<Directory /var/www/parikesit.abimanyu.E17/public>
+          Options +Indexes
+  </Directory>
+
+  <Directory /var/www/parikesit.abimanyu.E17/secret>
+          Options -Indexes
+  </Directory>
+```
+- Setelah itu, untuk membuktikan nya cukup dengan memasukkan command berikut pada Node Client
+```
+lynx parikesit.abimanyu.E17.com/public
+lynx parikesit.abimanyu.E17.com/secret
+```
 ### Hasil
-![Alt text]()
+- parikesit.abimanyu.E17.com/public
+![Alt text](image/no14_public.jpg)
+- parikesit.abimanyu.E17.com/secret
+![Alt text](image/no14_secret.jpg)
 
 ## Soal 15
 > Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 
 ### Script Pengerjaan
-###Hasil
-![Alt text]()
+- Buka file /etc/apache2/sites-available/parikesit.abimanyu.E17.conf
+- Tambahkan konfigurasi di dalam tag VirtualHost untuk membuat halaman error dengan kode 404 agar diarahkan ke /error/404.html dan kode 403 diarahkan ke `/error/403.html
+```
+ErrorDocument 404 /error/404.html
+ErrorDocument 403 /error/403.html
+```
+- Setelah itu, untuk membuktikan custom error cukup dengan menjalankan command berikut pada Node Client
+```
+lynx parikesit.abimanyu.E17.com/testerror
+lynx parikesit.abimanyu.E17.com/secret
+```
+### Hasil
+![Alt text](image/no15_forBidden.jpg)
+![Alt text](image/no15_notFound.jpg)
 
 ## Soal 16
 > Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 
 ### Script Pengerjaan
+- Buka file /etc/apache2/sites-available/parikesit.abimanyu.E17.conf
+- Tambahkan konfigurasi di dalam tag VirtualHost untuk membuat alias terhadap /var/www/parikesit.abimanyu.E17/public/js menjadi /js
+```
+Alias "/js" "/var/www/parikesit.abimanyu.E17/public/js"
+```
+- Lakukan pengujian pada client node Nakula, dengan perintah
+```
+lynx parikesit.abimanyu.E17.com/js
+```
 ### Hasil
-![Alt text]()
+![Alt text](image/no16.jpg)
 
 ## Soal 17
 > Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 
 ### Script Pengerjaan
+- Buka file /etc/apache2/ports.conf dan tambahkan 2 baris konfigurasi untuk melakukan Listen terhadap port 14000 dan 14400
+```
+Listen 14000
+Listen 14400
+```
+- Import file dari google drive yang disediakan untuk mengisi /var/www dari rjp.baratayuda.abimanyu.E17.com
+```
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1pPSP7yIR05JhSFG67RVzgkb-VcW9vQO6' -O rjp
+```
+- Lakukan unzip dan sesuaikan struktur folder untuk tepat berada di dalam /var/www/rjp.baratayuda.abimanyu.E17/abimanyu.E17
+```
+unzip rjp -d rjp.baratayuda.abimanyu.E17
+rm rjp
+mv rjp.baratayuda.abimanyu.E17/rjp.baratayuda.abimanyu.yyy.com/* rjp.baratayuda.abimanyu.E17
+rmdir rjp.baratayuda.abimanyu.E17/rjp.baratayuda.abimanyu.yyy.com
+```
+- Buat file rjp.baratayuda.abimanyu.E17.conf pada /etc/apache2/sites-available
+```
+nano rjp.baratayuda.abimanyu.E17.conf
+```
+- Isi file tersebut dengan konfigurasi untuk port 14000 dan 14400 dengan masing-masing tag VirtualHost memiliki properti nama server, alias server, admin server, dan DocumentRoot yang diarahken pada /var/www/rjp.baratayuda.abimanyu.E17
+```
+<VirtualHost *:14000 *:14400>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/rjp.baratayuda.abimanyu.E17
+  ServerName rjp.baratayuda.abimanyu.E17.com
+  ServerAlias www.rjp.baratayuda.abimanyu.E17.com
+
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+- Setelah itu, kita perlu melakukan aktivasi dan restart server Apache2
+```
+a2ensite rjp.baratayuda.abimanyu.E17.com.conf
+service apache2 restart
+```
+- Untuk pengujian dengan mengakses port 14000 atau 14400
+```
+lynx rjp.baratayuda.abimanyu.E17.com:14000
+lynx rjp.baratayuda.abimanyu.E17.com:14400
+```
 ### Hasil
-![Alt text]()
+![Alt text](image/no17.jpg)
+
 
 ## Soal 18
 > Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
 ### Script Pengerjaan
 ### Hasil
-![Alt text]()
+![Alt text](image/no18.jpg)
 
 ## Soal 19
 > Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
 ### Script Pengerjaan
 ### Hasil
-![Alt text]()
+![Alt text](image/no19.jpg)
 
 ## Soal 20
 > Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
 
 ### Script Pengerjaan
 ### Hasil
-![Alt text}()
+![Alt text](image/no20.jpg)
