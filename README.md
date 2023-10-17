@@ -14,7 +14,7 @@ Jaringan Komputer (F) </br>
 
 ### Script Pengerjaan
 - Topologi yang kami buat seperti gambar dibawah ini
-![Alt text]()
+![Alt text](image/topologi.png)
 - Lalu kita setting network masing-masing node dengan fitur ``Edit network configuration``
 
 Pandudewanata (Router)
@@ -99,7 +99,7 @@ Ketikkan ``iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.45.0.0/16`
 - Lalu ketikkan command ini di node ubuntu yang lain ``echo nameserver 192.168.122.1 > /etc/resolv.conf``
 - Semua node sekarang seharusnya sudah bisa melakukan ``ping`` ke google, yang artinya adalah sudah tersambung ke internet
 ### Hasil
-![Alt text]()
+![Alt text](image/ping_google.png)
 ## Soal 2
 > Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
 
@@ -138,7 +138,7 @@ $TTL	604800
 ```
 - Restart bind dengan perintah ``service bind9 restart``, lalu pada client conectkan dengan DNS nya menggunakan perintah ``echo nameserver 10.45.1.2 > /etc/resolv.conf`` dan ping domain arjuna.E17.com dengan ``ping arjuna.E17.com -c 5``
 ### Hasil
-![Alt text]()
+![Alt text](image/no2.png)
 
 ## Soal 3
 > Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
@@ -171,7 +171,7 @@ $TTL	604800
 ```
 - Restart bind dengan perintah ``service bind9 restart``, lalu pada client conectkan dengan DNS nya menggunakan perintah ``echo nameserver 10.45.1.2 > /etc/resolv.conf`` dan ping domain abimanyu.E17.com dengan ``ping abimanyu.E17.com -c 5``
 ### Hasil
-![Alt text]()
+![Alt text](image/no3.png)
 
 ## Soal 4
 > Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
@@ -199,7 +199,7 @@ parikesit IN	A	10.45.1.2    ; alias
 - Restart bind dengan perintah ``service bind9 restart``
 - Lalu pada client ping subdomain parikesit.abimanyu.E17.com dengan ``ping parikesit.abimanyu.E17.com -c 5``
 ### Hasil
-![Alt text]()
+![Alt text](image/no4.png)
 
 ## Soal 5
 > Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
@@ -239,7 +239,7 @@ apt-get install dnsutils
 host -t PTR 10.45.3.4
 ``` 
 ### Hasil
-![Alt text]()
+![Alt text](image/no5.png)
 
 ## Soal 6
 > Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
@@ -279,7 +279,7 @@ echo nameserver 10.45.3.2 > /etc/resolv.conf
 ping abimanyu.E17.com -c 5
 ```
 ### Hasil
-![Alt text]()
+![Alt text](image/no6.png)
 
 ## Soal 7
 > Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
@@ -385,7 +385,7 @@ www	IN	A	10.45.3.4	; abimanyu
 - Restart bind dengan perintah ``service bind9 restart``
 - Lalu pada client lakukan ping ``baratayuda.abimanyu.E17.com`` dan ``www.baratayuda.abimanyu.E17.com``
 ### Hasil
-![Alt]()
+![Alt](image/no7.png)
 
 ## Soal 8
 > Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
@@ -414,7 +414,7 @@ www.rjp IN	A	10.45.3.4	; abimanyu
 - Restart bind dengan perintah ``service bind9 restart``
 - Lalu pada client ping subdoaminnya ``rjp.baratayuda.abimanyu.E17.com`` dan ``www.rjp.baratayuda.abimanyu.E17.com``
 ### Hasil
-![Alt text]()
+![Alt text](image/no8.png)
 
 ## Soal 9
 > Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
@@ -519,13 +519,13 @@ nginx -t
 - Baru jalankan perintah ``curl localhost`` untuk melakukan testing di tiap web server
 ### Hasil
 - Pada Abimanyu web server
-![Alt]()
+![Alt text](image/no9_abimanyu.png)
 
 - Pada Prabukusuma web server
-![Alt text]()
+![Alt text](image/no9_prabukusuma.png)
 
 - Pada Wisanggeni web server
-![Alt text]()
+![Alt text](image/no9_wisanggeni.png)
 
 ## Soal 10
 > Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh
@@ -584,13 +584,13 @@ nano /etc/nginx/sites-available/modul2
 - Baru jalankan perintah ``curl localhost:[port_webServer]`` untuk melakukan testing di tiap web server
 ### Hasil
 - Pada Abimanyu web server
-![Alt text]()
+![Alt text](image/no10_abimanyu.png)
 
 - Pada Prabukusuma web server
-![Alt text]()
+![Alt text](image/no10_parbukusuma.png)
 
 - Pada Wisanggeni web server
-![Alt text]()
+![Alt text](image/no10_wisanggeni.png)
 
 ## Soal 11
 > Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
