@@ -645,19 +645,124 @@ nano /etc/nginx/sites-available/modul2
 > Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
 ### Script Pengerjaan
+- Karena www.rjp.baratayuda.abimanyu.E17.com membutuhkan Authentication, daftarkan username dan password yang sudah ditentukan beserta *error message* nya. "Wayang" untuk username dan "baratayudaE17" untuk passwordnya
+	```
+	echo -e '<VirtualHost *: 14000 *: 14400>
+		ServerAdmin webmaster@localhost
+		DocumentRoot /var/www/rjp.baratayuda. abimanyu. E17
+		ServerName rjp.baratayuda. abimanyu. E17. com
+		ServerAlias www.rjp.baratayuda.abimanyu. E17. com
+
+		<Directory /var/www/rjp.baratayuda. abimanyu. E17>
+				AuthType Basic
+				AuthName "Restricted Content"
+				AuthUserFile /etc/apache2/.htpasswd
+				Require valid-user
+		</Directory>
+
+		ErrorDocument 404 /error/404.html
+		ErrorDocument 403 /error/403.html
+		ErrorLog $ {APACHE_LOG_DIR}/error. log
+		CustomLog $ {APACHE_LOG_DIR}/access. log combined
+	</VirtualHost>' > /etc/apache2/sites-available/rjp.baratayuda. abimanyu. E17. com. conf
+
+	htpasswd -c -b /etc/apache2/.htpasswd Wayang baratayudaE17
+	```
+
+- Jangan lupa di-*enabled* dan apache di *restart*
+	```
+	a2ensite rjp.baratayuda.abimanyu.E17.com.conf
+	service apache2 restart
+	```
 ### Hasil
-![Alt text]()
+Berikut perbandingan yang tidak menggunakan dan menggunakan Authentication </br>
+- Tidak menggunakan Authentication
+	![Alt text](images/18-1.png)
+
+- Menggunakan Authentication
+	![Alt text](images/18-2.png)
+
 
 ## Soal 19
 > Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
 ### Script Pengerjaan
+- Untuk mengalihkan akses dari IP Abimanyu ke www.abimanyu.E17.com, diperlukan penambahan command ```Redirect``` dalam file ```/etc/apache2/sites-available/000-default.conf```
+	```
+	echo -e '<VirtualHost *: 80>
+		ServerAdmin webmaster@abimanyu.E17.com
+		DocumentRoot /var/www/html
+
+		ErrorLog $ {APACHE_LOG_DIR}/error.log
+		CustomLog $ {APACHE_LOG_DIR}/access. log combined
+		
+		Redirect / http://www.abimanyu.E17.com/
+
+	</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+	```
+
 ### Hasil
-![Alt text]()
+- Bukti IP Abimanyu, yakni 10.45.3.4 akan dialihkan ke www.abimanyu.E17.com
+![Alt text](images/19-1.png)
+
+- Tampilan www.abimanyu.E17.com
+![Alt text](images/19-2.png)
 
 ## Soal 20
 > Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
 
 ### Script Pengerjaan
+- Aktikan modul rewrite terlebih dahulu. Kemudian tambahkan konfigurasi untuk melakukan redirect saat mengakses gambar yang memiliki kata "abimanyu" di namanya menuju ```abimanyu.png```
+	```
+	a2enmod rewrite
+	
+	echo '
+	RewriteEngine On
+	RewriteCond %{REQUEST_URI} ^/public/images/ ( .* ) (abimanyu) ( .* \. (png |jpg) )
+	RewriteCond %{REQUEST_URI} !/public/images/abimanyu.png
+	RewriteRule abimanyu http: //parikesit. abimanyu. E17. com/public/images/abimanyu.png$1 [L, R=301]
+	' > /var/www/parikesit.abimanyu.E17/.htaccess
+	```
+
+- Mengatur konfigurasi situs yang ada di ```/etc/apache2/sites-available/parikesit.abimanyu.E17.com.conf```
+	```
+	echo "
+	<VirtualHost *: 80>
+
+		ServerAdmin webmaster@localhost
+		DocumentRoot /var/www/parikesit.abimanyu. E17
+		ServerName parikesit.abimanyu.E17. com
+		ServerAlias www.parikesit.abimanyu.E17.com
+
+		Directory /var/www/parikesit.abimanyu. E17/public>
+				Options +Indexes
+		</Directory>
+
+		<Directory /var/www/parikesit.abimanyu.E17/secret
+				Options -Indexes
+		</Directory>
+
+		<Directory /var/www/parikesit.abimanyu. E17>
+				Options +FollowSymLinks -Multiviews
+				AllowOverride All
+		</Directory>
+
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+		ErrorDocument 404 /error/404.html
+		ErrorDocument 403 /error/403.html
+
+		Alias /js /var/www/parikesit.abimanyu.E17/public/js
+
+	</VirtualHost>
+	" > /etc/apache2/sites-available/parikesit.abimanyu.E17.com.conf
+	```
+
+- Jangan lupa untuk merestart apache
+	```
+	service apache2 restart
+	```
 ### Hasil
-![Alt text}()
+![Alt text](images/20.png)
+
